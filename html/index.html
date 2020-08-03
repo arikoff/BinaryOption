@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Бинарный опцион</title>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <style>
+    @import url("style.css");
+  </style>
+</head>
+
+<body>
+  <div id="wrapper">
+    <header>
+      <div class="div_header" id="fake_img"></div>
+      <div class="div_header" id="user_logo"></div>
+      <div class="div_header" id="btc">
+        <p>&#8383;</p>
+      </div>
+      <div class="div_header_text">
+        <div>
+          <span class="arial colorWhite bold fontsize18">Иннокентий Ф. </span><span
+            class="arial color888 fontsize15">Счет
+            #12345678</span><br>
+          <span class="arial color888 fontsize15">Доступно средств: </span><span
+            class="arial colorWhite bold fontsize18" id="balance">120</span>
+        </div>
+      </div>
+    </header>
+    <div class="main" id="main">
+      <div class="h80vCenter borderBelow">
+        <span class="arial fontsize16 bold marginLeft20px">Бинарный опцион</span>
+      </div>
+
+      <div class="h80vCenter">
+        <span class="arial fontsize14 bold marginLeft20px">Выберите валюту и введите сумму ставки:</span>
+      </div>
+      <div class="centerArea" id="central">
+        <div class="betWindow marginLeft20px">
+          <div class="width50percent h40vCenter">
+            <span class="arial fontsize10 bold">Валюта</span>
+          </div>
+          <div class="width50percent h40vCenter">
+            <span class="arial fontsize10 bold">Сумма</span>
+          </div>
+          <div class="width50percent">
+            <!-- <form name="myForm" id="data"> -->
+            <select class=" select-css width100" id="currSelect" name="num">
+              <div id="innerImg"></div>
+              <option value="usd">usd</option>
+              <option value="eur">eur</option>
+              <option value="gbp">gbp</option>
+            </select>
+            <script type="text/javascript" src="scripts/select.js"></script>
+            <!-- </form> -->
+          </div>
+          <div class="width50percent h40vCenter">
+            <input id="betbox" class="width100" type="text" value="0.00" oninput=validate(this)>
+            <script type="text/javascript" src="scripts/input.js"></script>
+          </div>
+          <div class="clearFloat"></div>
+          <div class="h20vCenter">
+            <div class="right">
+              <span class="arial fontsize10 bold">После следующего изменения котировок индекс биткойна к этой валюте
+                пойдет:</span>
+            </div>
+          </div>
+          <div class="width50percent margin20u height120" id="chart_div"></div>
+          <script type="text/javascript" src="scripts/chart.js"></script>
+          <div class="width50percent margin20u ">
+            <div class="width100 flex">
+              <label><input type="radio" name="direction" value="up" checked>&#8593;вверх &nbsp; &nbsp;</label>
+              <label><input type="radio" name="direction" value="dowm">&#8595;вниз</label>
+            </div>
+            <div class="width300 margin20u">
+              <span class="arial fontsize14">По текущему курсу: </span><span id="betBTC"></span>
+            </div>
+          </div>
+        </div>
+        <div class="currentRates">
+          <div class="currentRate borderBelow imageUSD">
+            <div>
+              <span class="arial fontsize12 marginLeft100px">USD</span>
+              <span class="arial fontsize12 marginLeft100px color888">Курс: </span><span id="rateUSD"></span>
+            </div>
+          </div>
+          <div class="currentRate borderBelow imageEUR">
+            <div>
+              <span class="arial fontsize12 marginLeft100px">EUR</span>
+              <span class="arial fontsize12 marginLeft100px color888">Курс: </span><span id="rateEUR"></span>
+            </div>
+          </div>
+          <div class="currentRate imageGBP">
+            <div>
+              <span class="arial fontsize12 marginLeft100px">GBP</span>
+              <span class="arial fontsize12 marginLeft100px color888">Курс: </span><span id="rateGBP"></span>
+            </div>
+          </div>
+        </div>
+        <script type="text/javascript" src="scripts/getCurrentRates.js"></script>
+      </div>
+      <div class="borderBelow width960">
+        <div class="h80vCenter marginLeft20px">
+          <input id="accept" type="checkbox">
+          <span class="arial fontsize14">Я ознакомлен с правилами сервиса</span>
+        </div>
+      </div>
+      <div class="h80vCenter borderBelow div_button">
+        <span id="awaiting" class="arial fontsize14 bold center hidden">Ожидание изменения курса...</span>
+        <div class="right">
+          <button id="betbutton" disabled onclick=onClick()>СДЕЛАТЬ СТАВКУ</button>
+          <script type="text/javascript" src="scripts/submit.js"></script>
+        </div>
+      </div>
+    </div>
+    <div class="resultArea hidden" id="result">
+      <div class="table hidden" id="resultwin">
+        <div class="width100">
+          <span class="arial fontsize14">Поздравляем! Ваша ставка выиграла.</span>
+        </div>
+        <div class="width100">
+          <span class="arial fontsize14 newrowspan">Сумма выигрыша по обновленному курсу: </span><span
+            id="winBTC"></span>
+        </div>
+        <button style="margin-top: 20px;" onclick=restorePage()>Сделать еще ставку</button>
+      </div>
+      <div class="table hidden" id="resultlost">
+        <div class="width100">
+          <span class="arial fontsize14">К сожалению Ваша ставка проиграла.</span>
+        </div>
+        <button style="margin-top: 20px;" onclick=restorePage()>Сделать еще ставку</button>
+      </div>
+      <div class="table hidden" id="resultdraw">
+        <div class="width100">
+          <span class="arial fontsize14">Курс не изменился. Ставка возвращена.</span>
+        </div>
+        <button style="margin-top: 20px;" onclick=restorePage()>Сделать еще ставку</button>
+      </div>
+      <!-- <div class=""> -->
+      <script type="text/javascript" src="scripts/restorePage.js"></script>
+      <!-- </div> -->
+    </div>
+    <footer></footer>
+  </div>
+  <script type="text/javascript" src="scripts/check.js"></script>
+</body>
+
+</html>
