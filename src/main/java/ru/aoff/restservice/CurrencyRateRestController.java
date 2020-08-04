@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowired;
 import ru.aoff.restservice.context.CurrencyRate;
 import ru.aoff.restservice.context.CurrencyRates;
 import com.google.gson.Gson;
@@ -16,12 +17,15 @@ import ru.aoff.restservice.context.currentRatesResponse;
 @RestController
 public class CurrencyRateRestController {
 
+    @Autowired
+    private CurrencyRates currencyRates;
+
     @SneakyThrows
     @GetMapping("/update")
     public ResponseEntity<String> update(@RequestParam String updatedBefore) {
 
-        CurrencyRates currencyRates = (CurrencyRates) RestServiceApplication.context.getBean("currencyRates");
-
+//        CurrencyRates currencyRates = (CurrencyRates) RestServiceApplication.context.getBean("currencyRates");
+//
         Date dateUpdatedBefore = new Date(Long.valueOf(updatedBefore));
         while (dateUpdatedBefore.equals(currencyRates.getUpdatedAt())) {
             Thread.sleep(1000);
@@ -43,14 +47,23 @@ public class CurrencyRateRestController {
     @GetMapping("/initialize")
     public ResponseEntity<String> initialize(@RequestParam String currency) {
 
-        CurrencyRates currencyRates = (CurrencyRates) RestServiceApplication.context.getBean("currencyRates");
-
-        ArrayList<CurrencyRate> currentChart = switch (currency.toUpperCase()) {
-            case "USD" -> currencyRates.getUSD();
-            case "EUR" -> currencyRates.getEUR();
-            case "GBP" -> currencyRates.getGBP();
-            default -> new ArrayList<>();
-        };
+//        CurrencyRates currencyRates = (CurrencyRates) RestServiceApplication.context.getBean("currencyRates");
+//
+        ArrayList<CurrencyRate> currentChart;
+        switch (currency.toUpperCase()) {
+            case "USD":
+                currentChart = currencyRates.getUSD();
+                break;
+            case "EUR":
+                currentChart = currencyRates.getEUR();
+                break;
+            case "GBP":
+                currentChart = currencyRates.getGBP();
+                break;
+            default:
+                currentChart = new ArrayList<>();
+                break;
+        }
 
         Gson gson = new Gson();
 
@@ -67,8 +80,5 @@ public class CurrencyRateRestController {
                     .header("Access-Control-Allow-Origin", "*")
                     .body(gson.toJson(currentChart));
         }
-
-
     }
-
 }

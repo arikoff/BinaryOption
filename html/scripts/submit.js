@@ -1,6 +1,7 @@
 function onClick() {
   //отключили кнопку
   document.getElementById("betbutton").disabled = true;
+  document.getElementById("accept").disabled = true;
   //включили надпись "ожидание"
   document.getElementById("awaiting").classList.remove("hidden");
 

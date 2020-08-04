@@ -5,6 +5,7 @@ function restorePage() {
   document.getElementById("resultlost").classList.add("hidden");
   document.getElementById("resultdraw").classList.add("hidden");
   document.getElementById("accept").checked = false;
+  document.getElementById("accept").disabled = false;
   document.getElementById("betbox").value = "0.00";
   document.getElementById("betbutton").disabled = false;
   document.getElementById("currSelect").disabled = false;

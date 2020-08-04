@@ -25,11 +25,14 @@ public class SchedulerService {
 
     private boolean firstRun = true;
 
+    @Autowired
+    private CurrencyRates currencyRates;
+
     @SneakyThrows
     @Scheduled(fixedDelay = 55000)
     public void getNewRates() {
 
-        CurrencyRates currencyRates = (CurrencyRates) RestServiceApplication.context.getBean("currencyRates");
+//        CurrencyRates currencyRates = (CurrencyRates) RestServiceApplication.context.getBean("currencyRates");
         Date date = currencyRates.getUpdatedAt();
 
         do {
@@ -63,7 +66,7 @@ public class SchedulerService {
             return;
         }
 
-        CurrencyRates currencyRates = (CurrencyRates) RestServiceApplication.context.getBean("currencyRates");
+//        CurrencyRates currencyRates = (CurrencyRates) RestServiceApplication.context.getBean("currencyRates");
 
         if (!date.equals(currencyRates.getUpdatedAt())) {
 
