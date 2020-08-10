@@ -1,6 +1,8 @@
 package ru.aoff.restservice;
 
+import com.google.gson.JsonSyntaxException;
 import lombok.*;
+import org.springframework.web.client.RestClientException;
 import ru.aoff.restservice.context.CurrencyRate;
 import ru.aoff.restservice.context.CurrencyRates;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -20,28 +22,17 @@ import java.util.Date;
 public class SchedulerService {
 
     private final String URL = "https://api.coindesk.com/v1/bpi/currentprice.json?t=123454";
-    //private static final String CRON = "0 * * * * *";
     private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssX";
-
     private boolean firstRun = true;
 
-    @Autowired
-    private CurrencyRates currencyRates;
+    private final CurrencyRates currencyRates;
 
-    @SneakyThrows
-    @Scheduled(fixedDelay = 55000)
-    public void getNewRates() {
+    @Scheduled(fixedDelay = 1000)
+    public void getNewRates()  {
 
-//        CurrencyRates currencyRates = (CurrencyRates) RestServiceApplication.context.getBean("currencyRates");
         Date date = currencyRates.getUpdatedAt();
 
-        do {
-            getDataFromWebService();
-            if (!date.equals(currencyRates.getUpdatedAt())) {
-                Thread.sleep(1000);
-            }
-        }
-        while (date.equals(currencyRates.getUpdatedAt()));
+        getDataFromWebService();
 
         if (firstRun) {
             currencyRates.addRandomValuesHourBefore(currencyRates);
@@ -52,21 +43,36 @@ public class SchedulerService {
     private void getDataFromWebService() {
 
         RestTemplate restTemplate  = new RestTemplate();
-        String retData = restTemplate.getForObject(URL, String.class);
+        String retData;
+        try {
+            retData = restTemplate.getForObject(URL, String.class);
+        } catch (RestClientException e) {
+            e.printStackTrace();
+            currencyRates.setSuccess(false);
+            return;
+        }
 
         Gson gson = new Gson();
-        BCRateResponce bcRateResponce = gson.fromJson(retData, BCRateResponce.class);
+        BCRateResponce bcRateResponce;
+
+        try {
+            bcRateResponce = gson.fromJson(retData, BCRateResponce.class);
+        } catch (JsonSyntaxException e) {
+            e.printStackTrace();
+            currencyRates.setSuccess(false);
+            return;
+        }
 
         DateFormat iso = new SimpleDateFormat(DATE_FORMAT);
         Date date;
+
         try {
             date = iso.parse(bcRateResponce.time.updatedISO);
         } catch (ParseException e) {
             e.printStackTrace();
+            currencyRates.setSuccess(false);
             return;
         }
-
-//        CurrencyRates currencyRates = (CurrencyRates) RestServiceApplication.context.getBean("currencyRates");
 
         if (!date.equals(currencyRates.getUpdatedAt())) {
 
@@ -74,11 +80,10 @@ public class SchedulerService {
             currencyRates.getEUR().add(new CurrencyRate(date, bcRateResponce.bpi.EUR.rate_float));
             currencyRates.getGBP().add(new CurrencyRate(date, bcRateResponce.bpi.GBP.rate_float));
             currencyRates.setUpdatedAt(date);
+            currencyRates.setSuccess(true);
 
             System.out.println("updated at " + date.toString() + "/" + new Date().toString());
-
         }
-
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

@@ -18,6 +18,7 @@ public class CurrencyRates {
     private final ArrayList<CurrencyRate> EUR = new ArrayList<>();
     private final ArrayList<CurrencyRate> GBP = new ArrayList<>();
     private Date updatedAt = new Date(0L);
+    private boolean success;
 
     public void addRandomValuesHourBefore(CurrencyRates cr) {
 

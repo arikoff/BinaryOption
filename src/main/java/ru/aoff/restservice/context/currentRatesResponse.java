@@ -10,4 +10,5 @@ public class currentRatesResponse {
     private final float EUR;
     private final float GBP;
     private final Date updatedAt;
+    private final boolean success;
 }

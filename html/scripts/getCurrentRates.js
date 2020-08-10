@@ -1,9 +1,11 @@
 var selection = document.getElementById("currSelect");
 
-initialize().then(
+initialize().then(setUpdateInterval);
+
+function setUpdateInterval() {
   setInterval(() => {
     const currency = selection.options[selection.selectedIndex].value;
-    arr = JSON.parse(localStorage.getItem(currency));
+    const arr = JSON.parse(localStorage.getItem(currency));
     const URL =
       "http://127.0.0.1:8080/update?updatedBefore=" +
       +new Date(arr[arr.length - 1].date);
@@ -11,21 +13,23 @@ initialize().then(
     fetch(URL, options)
       .then((response) => response.json())
       .then((data) => refreshRates(data));
-  }, 60000)
-);
+  }, 1000);
+}
 
 function refreshRates(data) {
-  document.getElementById("rateUSD").innerHTML = data.USD;
-  document.getElementById("rateEUR").innerHTML = data.EUR;
-  document.getElementById("rateGBP").innerHTML = data.GBP;
+  const arr = JSON.parse(localStorage.getItem("usd"));
 
-  addValueToStorage("usd", data.updatedAt, data.USD);
-  addValueToStorage("eur", data.updatedAt, data.EUR);
-  addValueToStorage("gbp", data.updatedAt, data.GBP);
+  if (data.updatedAt > arr[arr.length - 1].date && data.success == true) {
+    document.getElementById("rateUSD").innerHTML = data.USD;
+    document.getElementById("rateEUR").innerHTML = data.EUR;
+    document.getElementById("rateGBP").innerHTML = data.GBP;
 
-  const currency = selection.options[selection.selectedIndex].value;
+    addValueToStorage("usd", data.updatedAt, data.USD);
+    addValueToStorage("eur", data.updatedAt, data.EUR);
+    addValueToStorage("gbp", data.updatedAt, data.GBP);
 
-  drawChart(currency);
+    drawChart(selection.options[selection.selectedIndex].value);
+  }
 }
 
 function addValueToStorage(currency, updatedAt, value) {
@@ -39,6 +43,7 @@ function initialize() {
     initializeChart("usd");
     initializeChart("eur");
     initializeChart("gbp");
+    resolve();
   });
 }
 

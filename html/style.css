@@ -27,9 +27,6 @@ input {
   text-align: right;
 }
 
-button {
-}
-
 .hidden {
   display: none !important;
 }
@@ -117,13 +114,13 @@ button[disabled] {
 #user_logo {
   width: 50%;
   max-width: 50%;
-  background-image: url("img/USD.png");
+  background-image: url("img/usd.png");
   background-position-x: right;
   background-repeat: no-repeat;
 }
 
 #btc_img {
-  background-image: url("img/EUR.png");
+  background-image: url("img/eur.png");
   background-repeat: no-repeat;
 }
 
@@ -280,15 +277,15 @@ button[disabled] {
 }
 
 .imageUSD {
-  background-image: url("img/USD.png");
+  background-image: url("img/usd.png");
 }
 
 .imageEUR {
-  background-image: url("img/EUR.png");
+  background-image: url("img/eur.png");
 }
 
 .imageGBP {
-  background-image: url("img/GBP.png");
+  background-image: url("img/gbp.png");
 }
 
 .h40vCenter {
@@ -326,7 +323,7 @@ button[disabled] {
   border-radius: 0.5em;
   appearance: none;
   background-color: #fff;
-  background-image: url("img/USD.png");
+  background-image: url("img/usd.png");
   background-repeat: no-repeat;
   background-size: contain;
   background-position-x: 0.7em;

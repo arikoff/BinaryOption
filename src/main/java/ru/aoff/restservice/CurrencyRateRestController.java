@@ -3,6 +3,7 @@ package ru.aoff.restservice;
 import java.util.ArrayList;
 import java.util.Date;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import ru.aoff.restservice.context.CurrencyRate;
@@ -15,40 +16,33 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.aoff.restservice.context.currentRatesResponse;
 
 @RestController
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class CurrencyRateRestController {
 
-    @Autowired
-    private CurrencyRates currencyRates;
+    private final CurrencyRates currencyRates;
 
     @SneakyThrows
     @GetMapping("/update")
-    public ResponseEntity<String> update(@RequestParam String updatedBefore) {
+    public ResponseEntity<String> update() {
 
-//        CurrencyRates currencyRates = (CurrencyRates) RestServiceApplication.context.getBean("currencyRates");
-//
-        Date dateUpdatedBefore = new Date(Long.valueOf(updatedBefore));
-        while (dateUpdatedBefore.equals(currencyRates.getUpdatedAt())) {
-            Thread.sleep(1000);
-        }
         float USD = currencyRates.getUSD().get(currencyRates.getUSD().size() - 1).getValue();
         float EUR = currencyRates.getEUR().get(currencyRates.getEUR().size() - 1).getValue();
         float GBP = currencyRates.getGBP().get(currencyRates.getGBP().size() - 1).getValue();
 
         Date updatedAt = currencyRates.getUpdatedAt();
+        boolean success = currencyRates.isSuccess();
 
         Gson gson = new Gson();
 
         return ResponseEntity.ok()
                 .header("Access-Control-Allow-Origin", "*")
-                .body(gson.toJson(new currentRatesResponse(USD, EUR, GBP, updatedAt)));
+                .body(gson.toJson(new currentRatesResponse(USD, EUR, GBP, updatedAt, success)));
     }
 
     @SneakyThrows
     @GetMapping("/initialize")
     public ResponseEntity<String> initialize(@RequestParam String currency) {
 
-//        CurrencyRates currencyRates = (CurrencyRates) RestServiceApplication.context.getBean("currencyRates");
-//
         ArrayList<CurrencyRate> currentChart;
         switch (currency.toUpperCase()) {
             case "USD":
